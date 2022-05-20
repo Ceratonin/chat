@@ -1,68 +1,78 @@
-import React, { useState } from "react";
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
+import React, { useState, useReducer } from "react";
 import "./login.scss";
+import axios from "axios";
 
 function Login() {
   const [login, setlogin] = useState("");
   const [room, setRoom] = useState("");
+  const [isLoginValid, setIsLoginValid] = useState(false);
+  const [isRoomValid, setIsRoomValid] = useState(false);
+  const [isValid, setValid] = useState({ loginValid: false, roomValid: false });
+
+  const reduce = () => {};
+
+  // useReducer(reduce, { loginValid: false, roomValid: false });
 
   const handleChangeLogin = (e: React.ChangeEvent<HTMLInputElement>) => {
     setlogin(e.target.value);
+    setIsLoginValid(true);
+    // setValid({ loginValid: true });
   };
 
   const handleChangeRoom = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRoom(e.target.value);
+    setIsRoomValid(true);
+  };
+
+  const handleClick = async () => {
+    if (!room) return setIsRoomValid(false);
+    if (!login) return setIsLoginValid(false);
+
+    await axios.post("/rooms", (req: any, res: any) =>
+      res.send(`${login}, ${room}`)
+    );
   };
 
   return (
-    <Box
-      sx={{
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <Paper
-        sx={{
-          display: "flex",
-          background: "linear-gradient(45deg, #2196f3 30%, #6ce3ff 90%)",
-          color: "white",
-          width: "20rem",
-          height: "21rem",
-          flexDirection: "column",
-          borderRadius: "0.5rem",
-        }}
-        elevation={12}
-      >
-        <div className="auth_block login">Логин</div>
+    <div className="page_login">
+      <section>
+        <form className="needs-validation">
+          <div className="auth_block login">Логин</div>
 
-        <div className="auth_block input-group">
-          Никнейм:
-          <input
-            type="text"
-            className="form-control"
-            value={login}
-            onChange={handleChangeLogin}
-          />
-        </div>
+          <div className="auth_block input-group">
+            Никнейм:
+            <input
+              type="text"
+              className="form-control"
+              value={login}
+              onChange={handleChangeLogin}
+              required
+            />
+          </div>
 
-        <div className="auth_block input-group">
-          Комната:
-          <input
-            type="text"
-            className="form-control"
-            value={room}
-            onChange={handleChangeRoom}
-          />
-        </div>
+          <div className="auth_block input-group">
+            Комната:
+            <input
+              type="text"
+              className="form-control"
+              value={room}
+              onChange={handleChangeRoom}
+              required
+            />
+          </div>
 
-        <div className="auth_block">
-          <button type="submit" className="btn btn-primary"> Авторизоваться </button>
-        </div>
-      </Paper>
-    </Box>
+          <div className="auth_block">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleClick}
+            >
+              Авторизоваться
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
   );
 }
 
