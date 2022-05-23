@@ -26,7 +26,7 @@ function Login() {
         return { ...state, isLoginValid: false };
 
       case ACTIONS.ISROOMVALID:
-        if (action.payload.room !== "") {
+        if (action.payload.room !== "" && action.payload.room.match(/^\d+$/)) {
           return { ...state, isRoomValid: true };
         }
         return { ...state, isRoomValid: false };
@@ -53,7 +53,6 @@ function Login() {
 
   const handleClick = async () => {
     const { isLoginValid, isRoomValid } = state;
-    console.log(state);
 
     if (!isLoginValid || !isRoomValid) {
       return setValid({
@@ -66,7 +65,7 @@ function Login() {
       checkValidLogin: isLoginValid,
       checkValidRoom: isRoomValid,
     });
-    
+
     await axios.post("/rooms", (req: any, res: any) =>
       res.send(`${login}, ${room}`)
     );
