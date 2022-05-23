@@ -1,8 +1,12 @@
+// import { PORT } from "./src/utils/consts"
+
 const express = require("express");
 const bodyParser = require("body-parser");
 
 const app = express();
 const server = require("http").Server(app);
+
+const constants = require("./src/utils/consts");
 
 app.use(bodyParser.json());
 app.use(
@@ -19,6 +23,4 @@ app.post("/rooms", (req, res) => {
   console.log(req.body);
 });
 
-const PORT = 4444;
-
-server.listen(PORT, console.log("Работаем"));
+server.listen(constants.PORT, console.log("Работаем"));

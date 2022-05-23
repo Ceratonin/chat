@@ -41,6 +41,7 @@
     ],
     "no-unused-vars": "warn",
     "no-dupe-keys": "warn",
-    "consistent-return": "off"
+    "consistent-return": "off",
+    "import/prefer-default-export": 0
   }
 }

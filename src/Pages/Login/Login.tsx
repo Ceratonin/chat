@@ -1,33 +1,72 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 import "./login.scss";
 import axios from "axios";
 
 function Login() {
   const [login, setlogin] = useState("");
   const [room, setRoom] = useState("");
-  const [isLoginValid, setIsLoginValid] = useState(false);
-  const [isRoomValid, setIsRoomValid] = useState(false);
-  const [isValid, setValid] = useState({ loginValid: false, roomValid: false });
+  const [isValid, setValid] = useState({
+    checkValidLogin: true,
+    checkValidRoom: true,
+  });
 
-  const reduce = () => {};
+  const ACTIONS = {
+    ISLOGINVALID: "validateLogin",
+    ISROOMVALID: "validateRoom",
+  };
 
-  // useReducer(reduce, { loginValid: false, roomValid: false });
+  const initialState = { isLoginValid: false, isRoomValid: false };
+
+  const reducer = (state: any, action: any) => {
+    switch (action.type) {
+      case ACTIONS.ISLOGINVALID:
+        if (action.payload.login !== "") {
+          return { ...state, isLoginValid: true };
+        }
+        return { ...state, isLoginValid: false };
+
+      case ACTIONS.ISROOMVALID:
+        if (action.payload.room !== "") {
+          return { ...state, isRoomValid: true };
+        }
+        return { ...state, isRoomValid: false };
+
+      default:
+        return state;
+    }
+  };
+
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const handleChangeLogin = (e: React.ChangeEvent<HTMLInputElement>) => {
     setlogin(e.target.value);
-    setIsLoginValid(true);
-    // setValid({ loginValid: true });
   };
 
   const handleChangeRoom = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRoom(e.target.value);
-    setIsRoomValid(true);
   };
 
-  const handleClick = async () => {
-    if (!room) return setIsRoomValid(false);
-    if (!login) return setIsLoginValid(false);
+  useEffect(() => {
+    dispatch({ type: ACTIONS.ISLOGINVALID, payload: { login } });
+    dispatch({ type: ACTIONS.ISROOMVALID, payload: { room } });
+  }, [login, room]);
 
+  const handleClick = async () => {
+    const { isLoginValid, isRoomValid } = state;
+    console.log(state);
+
+    if (!isLoginValid || !isRoomValid) {
+      return setValid({
+        checkValidLogin: isLoginValid,
+        checkValidRoom: isRoomValid,
+      });
+    }
+
+    setValid({
+      checkValidLogin: isLoginValid,
+      checkValidRoom: isRoomValid,
+    });
+    
     await axios.post("/rooms", (req: any, res: any) =>
       res.send(`${login}, ${room}`)
     );
@@ -39,22 +78,46 @@ function Login() {
         <form className="needs-validation">
           <div className="auth_block login">Логин</div>
 
-          <div className="auth_block input-group">
-            Никнейм:
+          <div
+            className={`auth_block input-group ${
+              !isValid.checkValidLogin ? "err" : ""
+            }`}
+          >
+            <div className="auth_block_title">
+              Никнейм:
+              <span className="err_msg">
+                {!isValid.checkValidLogin ? "Неверные данные" : ""}
+              </span>
+            </div>
+
             <input
               type="text"
-              className="form-control"
+              className={`form-control ${
+                !isValid.checkValidLogin ? "err_inp" : ""
+              }`}
               value={login}
               onChange={handleChangeLogin}
               required
             />
           </div>
 
-          <div className="auth_block input-group">
-            Комната:
+          <div
+            className={`auth_block input-group ${
+              !isValid.checkValidRoom ? "err" : ""
+            }`}
+          >
+            <div className="auth_block_title">
+              Комната:
+              <span className="err_msg">
+                {!isValid.checkValidRoom ? "Неверные данные" : ""}
+              </span>
+            </div>
+
             <input
               type="text"
-              className="form-control"
+              className={`form-control ${
+                !isValid.checkValidRoom ? "err_inp" : ""
+              }`}
               value={room}
               onChange={handleChangeRoom}
               required
