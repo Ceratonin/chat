@@ -1,12 +1,15 @@
-// import { PORT } from "./src/utils/consts"
-
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 
 const app = express();
-const server = require("http").Server(app);
-
-const constants = require("./src/utils/consts");
+const server = require("http").createServer(app);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
 
 app.use(bodyParser.json());
 app.use(
@@ -14,13 +17,35 @@ app.use(
     extended: true,
   })
 );
+app.use(cors());
 
-app.get("/", (req, res) => {
-  res.send("Работа");
+const rooms = new Map();
+
+app.get("/rooms", (req, res) => {
+  res.json(rooms);
 });
 
 app.post("/rooms", (req, res) => {
-  console.log(req.body);
+  const { room, login } = req.body;
+
+  if (!rooms.has(room)) {
+    rooms.set(
+      room,
+      new Map([
+        ["users", new Map()],
+        ["messages", []],
+      ])
+    );
+  }
+
+  res.send();
 });
 
-server.listen(constants.PORT, console.log("Работаем"));
+io.on("connection", (socket) => {
+  socket.on("loggedIn", (data) => console.log(data));
+  console.log("USER-", socket.id);
+});
+
+const PORT = 4444;
+
+server.listen(PORT, console.log("Работаем"));

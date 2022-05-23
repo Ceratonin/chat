@@ -2,9 +2,10 @@ import React, { useState, useReducer, useEffect } from "react";
 import "./login.scss";
 import axios from "axios";
 
-function Login() {
+function Login({ enterRoom }: any) {
   const [login, setlogin] = useState("");
   const [room, setRoom] = useState("");
+  const [loading, isLoading] = useState(false);
   const [isValid, setValid] = useState({
     checkValidLogin: true,
     checkValidRoom: true,
@@ -20,7 +21,10 @@ function Login() {
   const reducer = (state: any, action: any) => {
     switch (action.type) {
       case ACTIONS.ISLOGINVALID:
-        if (action.payload.login !== "") {
+        if (
+          action.payload.login !== "" &&
+          action.payload.login.match(/^\S*$/)
+        ) {
           return { ...state, isLoginValid: true };
         }
         return { ...state, isLoginValid: false };
@@ -53,22 +57,21 @@ function Login() {
 
   const handleClick = async () => {
     const { isLoginValid, isRoomValid } = state;
-
-    if (!isLoginValid || !isRoomValid) {
-      return setValid({
-        checkValidLogin: isLoginValid,
-        checkValidRoom: isRoomValid,
-      });
-    }
-
     setValid({
       checkValidLogin: isLoginValid,
       checkValidRoom: isRoomValid,
     });
 
-    await axios.post("/rooms", (req: any, res: any) =>
-      res.send(`${login}, ${room}`)
-    );
+    if (!isLoginValid || !isRoomValid) return;
+
+    isLoading((val) => !val);
+
+    await axios
+      .post("/rooms", {
+        room,
+        login,
+      })
+      .then(enterRoom);
   };
 
   return (
@@ -125,6 +128,7 @@ function Login() {
 
           <div className="auth_block">
             <button
+              disabled={loading}
               type="button"
               className="btn btn-primary"
               onClick={handleClick}
