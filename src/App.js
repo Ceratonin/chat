@@ -4,9 +4,10 @@ import Login from "./Pages/Login/Login";
 
 function App() {
   const [isLogin, setLogin] = useState(false);
-  const enterRoom = () => {
+
+  const enterRoom = (obj) => {
     setLogin(val => !val)
-    socket.emit("loggedIn")
+    socket.emit("loggedIn", obj)
   };
 
   return (

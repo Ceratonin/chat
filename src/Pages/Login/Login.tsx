@@ -1,6 +1,7 @@
 import React, { useState, useReducer, useEffect } from "react";
 import "./login.scss";
 import axios from "axios";
+import reducer, { ACTIONS } from "../../reducer";
 
 function Login({ enterRoom }: any) {
   const [login, setlogin] = useState("");
@@ -11,36 +12,9 @@ function Login({ enterRoom }: any) {
     checkValidRoom: true,
   });
 
-  const ACTIONS = {
-    ISLOGINVALID: "validateLogin",
-    ISROOMVALID: "validateRoom",
-  };
+  // const initialState = { isLoginValid: false, isRoomValid: false };
 
-  const initialState = { isLoginValid: false, isRoomValid: false };
-
-  const reducer = (state: any, action: any) => {
-    switch (action.type) {
-      case ACTIONS.ISLOGINVALID:
-        if (
-          action.payload.login !== "" &&
-          action.payload.login.match(/^\S*$/)
-        ) {
-          return { ...state, isLoginValid: true };
-        }
-        return { ...state, isLoginValid: false };
-
-      case ACTIONS.ISROOMVALID:
-        if (action.payload.room !== "" && action.payload.room.match(/^\d+$/)) {
-          return { ...state, isRoomValid: true };
-        }
-        return { ...state, isRoomValid: false };
-
-      default:
-        return state;
-    }
-  };
-
-  const [state, dispatch] = useReducer(reducer, initialState);
+  // const [state, dispatch] = useReducer(reducer, initialState);
 
   const handleChangeLogin = (e: React.ChangeEvent<HTMLInputElement>) => {
     setlogin(e.target.value);
@@ -50,28 +24,33 @@ function Login({ enterRoom }: any) {
     setRoom(e.target.value);
   };
 
-  useEffect(() => {
-    dispatch({ type: ACTIONS.ISLOGINVALID, payload: { login } });
-    dispatch({ type: ACTIONS.ISROOMVALID, payload: { room } });
-  }, [login, room]);
+  // useEffect(() => {
+  //   dispatch({ type: ACTIONS.ISLOGINVALID, payload: { login } });
+  //   dispatch({ type: ACTIONS.ISROOMVALID, payload: { room } });
+  // }, [login, room]);
 
   const handleClick = async () => {
-    const { isLoginValid, isRoomValid } = state;
+    const obj = {
+      login,
+      room,
+    };
+
     setValid({
-      checkValidLogin: isLoginValid,
-      checkValidRoom: isRoomValid,
+      checkValidLogin: Boolean(login.match(/^\S*$/) && login.trim()),
+      checkValidRoom: Boolean(room.match(/^\d+$/)),
     });
 
-    if (!isLoginValid || !isRoomValid) return;
+    if (
+      login === "" ||
+      !login.match(/^\S*$/) ||
+      room === "" ||
+      !room.match(/^\d+$/)
+    )
+      return;
 
     isLoading((val) => !val);
 
-    await axios
-      .post("/rooms", {
-        room,
-        login,
-      })
-      .then(enterRoom);
+    await axios.post("/rooms", obj).then(() => enterRoom(obj));
   };
 
   return (
