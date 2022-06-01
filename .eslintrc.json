@@ -43,6 +43,7 @@
     "no-dupe-keys": "warn",
     "consistent-return": "off",
     "import/prefer-default-export": 0,
-    "eqeqeq": 1
+    "eqeqeq": 1,
+    "react/no-array-index-key": "warn"
   }
 }

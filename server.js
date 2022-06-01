@@ -42,7 +42,15 @@ app.post("/rooms", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  socket.on("loggedIn", (data) => console.log(data));
+  socket.on("connection", (data) => {
+    const {room, login} = data
+
+    socket.join(room);
+    rooms.get(room).get("users").set(socket.id, login);
+
+    const inRoomUsers = [...rooms.get(room).get("users").values()]
+    socket.to(room).emit("connected", inRoomUsers)
+  });
   console.log("USER-", socket.id);
 });
 
