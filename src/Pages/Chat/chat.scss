@@ -42,13 +42,17 @@
           border: 0.1rem solid rgba(27, 27, 27, 0.1);
           border-radius: 0.5rem;
           padding: 0.4rem;
+          margin: 0.4rem 0;
           box-shadow: -0.1rem 0.1rem 0.1rem black;
           font-family: sans-serif;
+          list-style-type: none; 
         }
       }
     }
 
     .chat_block {
+      display: flex;
+      flex-direction: column;
       font-family: "Roboto";
       background-color: #333336;
       width: 100%;
@@ -60,6 +64,7 @@
         flex-direction: column;
         height: 93%;
         overflow-y: auto;
+        overflow-x: hidden;
 
         .chat_message_obj {
           margin: 0.8rem 1rem 0 1rem;
@@ -68,10 +73,12 @@
 
           .chat_message {
             background: linear-gradient(225deg, #2196f3 30%, #009ec2 90%);
-            padding: 0.5rem;
-            width: fit-content;
-            border-radius: 0.5rem;
             box-shadow: -0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.75);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            width: fit-content;
+            max-width: 40vw;
+            overflow-wrap: break-word;
           }
 
           .chat_message_userName {
@@ -96,6 +103,7 @@
           .message_send_text {
             border: 0.1rem solid rgba(255, 255, 255, 0.5);
             background-color: transparent;
+            color: white;
 
             &::placeholder {
               color: rgba(255, 255, 255, 0.8);
@@ -137,6 +145,7 @@
   background-color: rgb(205, 215, 219);
   background: linear-gradient(rgb(203, 205, 209), rgb(155, 159, 163));
 }
+
 #scroll {
   cursor: auto !important;
 }

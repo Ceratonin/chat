@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./chat.scss";
 
-function Chat() {
+function Chat({ users }: { users: string[] }) {
   const [inputMessage, setInputMessage] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -11,7 +11,10 @@ function Chat() {
   const handleClick = () => {};
 
   const messagesObj = new Map([
-    ["Albert", "Привет, меня зовут Albert"],
+    [
+      "Albert",
+      "Привет, меня зовут Albert я родился в москве в семидесятых на окраине города моча рано ударила в голову",
+    ],
     ["Dodik", "Ты не Альберт, ты додик"],
     ["Крутой", "додиком зовут то тебя"],
     ["Хихич", "Хихихихиххихихих"],
@@ -22,23 +25,25 @@ function Chat() {
     ["12341234", "Привет, меня зовут Albert"],
     ["234", "Ты не Альберт, ты додик"],
     ["543", "додиком зовут то тебя"],
-    ["54135", "Хихихихиххихихих"],
+    [
+      "54135",
+      "Хихихихиххихихиххихихихихиххихихихихихихихиххихихихихихихихиххихихихихихихиххииххихихааааааааааааааааааааааааааааааааааааааааааааа",
+    ],
   ]);
-  const users = [...messagesObj.keys()];
-  
+
   return (
     <div className="page_chat">
       <section>
         <div className="users_block">
           <span className="users_header">Пользователи({users.length}):</span>
           <hr className="users_line" />
-          <div className="users_list" id="scroll">
+          <ul className="users_list" id="scroll">
             {users.map((user, key) => (
-              <h4 key={key} className="users_user">
+              <li key={key} className="users_user">
                 {user}
-              </h4>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
 
         <div className="chat_block">

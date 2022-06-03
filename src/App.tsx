@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import socket from "./socket";
 import Login from "./Pages/Login/Login";
 import Chat from "./Pages/Chat/Chat";
+import reducer, { ACTIONS } from "./components/reducer";
 
 interface ISocketData {
   login: string;
@@ -9,23 +10,40 @@ interface ISocketData {
 }
 
 function App() {
-  const [isLogin, setLogin] = useState(false);
+  const [state, dispatch] = useReducer(reducer, {
+    isLogin: false,
+    login: "",
+    room: "",
+    users: [],
+    messages: [],
+  });
 
   const enterRoom = (data: ISocketData) => {
-    setLogin((val) => !val);
-    socket.emit("connection", data);
+    dispatch({
+      type: ACTIONS.LOGIN,
+      payload: data,
+    });
+    
+    socket.emit("connected", data);
     (window as any).socket = socket;
   };
 
+  const setUsers = (data: string[]) => {
+    dispatch({ type: ACTIONS.SET_USERS, payload: data });
+  };
+
   useEffect(() => {
-    socket.on("connected", (data) => {
-      console.log(data);
-    });
+    socket.on("connected", setUsers);
+    socket.on("disconnected", setUsers);
   }, []);
 
   return (
     <div className="wrapper">
-      {isLogin ? <Login enterRoom={enterRoom} /> : <Chat />}
+      {!state.isLogin ? (
+        <Login enterRoom={enterRoom} />
+      ) : (
+        <Chat users={state.users} />
+      )}
     </div>
   );
 }

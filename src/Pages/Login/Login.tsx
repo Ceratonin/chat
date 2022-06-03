@@ -1,7 +1,7 @@
 import React, { useState, useReducer, useEffect } from "react";
 import "./login.scss";
 import axios from "axios";
-import reducer, { ACTIONS } from "../../reducer";
+import reducer, { ACTIONS } from "../../components/reducer";
 
 function Login({ enterRoom }: any) {
   const [login, setlogin] = useState("");

@@ -22,7 +22,10 @@ app.use(cors());
 const rooms = new Map();
 
 app.get("/rooms", (req, res) => {
-  res.json(rooms);
+  const obj ={
+    rooms: [...rooms.get(req.body.room).get("users".values())],
+    messages: [...rooms.get(req.body.room).get("messages").values()]
+  } 
 });
 
 app.post("/rooms", (req, res) => {
@@ -42,16 +45,26 @@ app.post("/rooms", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  socket.on("connection", (data) => {
-    const {room, login} = data
+  socket.on("connected", (data) => {
+    const { room, login } = data;
 
     socket.join(room);
     rooms.get(room).get("users").set(socket.id, login);
 
-    const inRoomUsers = [...rooms.get(room).get("users").values()]
-    socket.to(room).emit("connected", inRoomUsers)
+    const inRoomUsers = [...rooms.get(room).get("users").values()];
+    socket.to(room).emit("connected", inRoomUsers);
   });
-  console.log("USER-", socket.id);
+
+  socket.on("disconnect", (data) => {
+    const { room, login } = data;
+
+    rooms.forEach((value, key) => {
+      if (value.get("users").delete(socket.id)) {
+        const inRoomUsers = [...value.get("users").values()];
+        socket.to(key).emit("disconnected", inRoomUsers);
+      }
+    });
+  });
 });
 
 const PORT = 4444;
