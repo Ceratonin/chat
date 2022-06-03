@@ -21,11 +21,16 @@ app.use(cors());
 
 const rooms = new Map();
 
-app.get("/rooms", (req, res) => {
-  const obj ={
-    rooms: [...rooms.get(req.body.room).get("users".values())],
-    messages: [...rooms.get(req.body.room).get("messages").values()]
-  } 
+app.get("/rooms/:room", (req, res) => {
+  const { room } = req.params;
+
+  const data = rooms.has(room)
+  ? { 
+        users: [...rooms.get(room).get("users").values()],
+        messages: [...rooms.get(room).get("messages").values()],
+      }
+    : { users: [], messages: [] };
+  res.json(data);
 });
 
 app.post("/rooms", (req, res) => {
