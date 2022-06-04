@@ -1,41 +1,31 @@
 import React, { useState } from "react";
+import socket from "../../utils/socket";
+import { IChat } from "../../utils/types";
 import "./chat.scss";
 
-function Chat({ users }: { users: string[] }) {
+function Chat({ state, myMessage }: IChat) {
+  const { login, room, users, messages } = state;
   const [inputMessage, setInputMessage] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputMessage(e.target.value);
   };
 
-  const handleClick = () => {};
-
-  const messagesObj = new Map([
-    [
-      "Albert",
-      "Привет, меня зовут Albert я родился в москве в семидесятых на окраине города моча рано ударила в голову",
-    ],
-    ["Dodik", "Ты не Альберт, ты додик"],
-    ["Крутой", "додиком зовут то тебя"],
-    ["Хихич", "Хихихихиххихихих"],
-    ["23", "Привет, меня зовут Albert"],
-    ["23", "Ты не Альберт, ты додик"],
-    ["32", "додиком зовут то тебя"],
-    ["123", "Хихихихиххихихих"],
-    ["12341234", "Привет, меня зовут Albert"],
-    ["234", "Ты не Альберт, ты додик"],
-    ["543", "додиком зовут то тебя"],
-    [
-      "54135",
-      "Хихихихиххихихиххихихихихиххихихихихихихихиххихихихихихихихиххихихихихихихиххииххихихааааааааааааааааааааааааааааааааааааааааааааа",
-    ],
-  ]);
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    socket.emit("message", { login, room, inputMessage });
+    myMessage({ login, inputMessage });
+    setInputMessage("");
+  };
 
   return (
     <div className="page_chat">
       <section>
         <div className="users_block">
-          <span className="users_header">Пользователи({users.length}):</span>
+          <div className="users_header">
+            <span>Комната {room}</span>
+            <span>Пользователи({users.length}):</span>
+          </div>
           <hr className="users_line" />
           <ul className="users_list" id="scroll">
             {users.map((user, key) => (
@@ -48,16 +38,23 @@ function Chat({ users }: { users: string[] }) {
 
         <div className="chat_block">
           <div className="chat_messages_list" id="scroll">
-            {[...messagesObj.entries()].map(([userName, message], key) => (
-              <div key={key} className="chat_message_obj">
-                <span className="chat_message">{message}</span>
-                <span className="chat_message_userName">{userName}</span>
-              </div>
-            ))}
+            {messages.map((message, key) =>
+              message.login === login ? (
+                <div key={key} className="chat_message_obj">
+                  <span className="my chat_message">{message.inputMessage}</span>
+                  <span className="my chat_message_userName">{message.login}</span>
+                </div>
+              ) : (
+                <div key={key} className="chat_message_obj">
+                  <span className="chat_message">{message.inputMessage}</span>
+                  <span className="chat_message_userName">{message.login}</span>
+                </div>
+              )
+            )}
           </div>
 
           <div className="message_send_block">
-            <form className="message_send">
+            <form className="message_send" onSubmit={handleSubmit}>
               <input
                 type="text"
                 className="form-control message_send_text"
@@ -66,11 +63,7 @@ function Chat({ users }: { users: string[] }) {
                 placeholder="Напишите сообщение..."
               />
 
-              <button
-                type="button"
-                className="btn message_send_btn"
-                onClick={handleClick}
-              >
+              <button type="submit" className="btn message_send_btn">
                 <i className="bi bi-send-fill" />
               </button>
             </form>

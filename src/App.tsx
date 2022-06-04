@@ -1,14 +1,10 @@
 import { useEffect, useReducer } from "react";
 import axios from "axios";
-import socket from "./socket";
+import socket from "./utils/socket";
 import Login from "./Pages/Login/Login";
 import Chat from "./Pages/Chat/Chat";
 import reducer, { ACTIONS } from "./components/reducer";
-
-interface ISocketData {
-  login: string;
-  room: string;
-}
+import { ISocketData, IMessagesArr } from "./utils/types";
 
 function App() {
   const [state, dispatch] = useReducer(reducer, {
@@ -21,6 +17,10 @@ function App() {
 
   const setUsers = (data: string[]) => {
     dispatch({ type: ACTIONS.SET_USERS, payload: data });
+  };
+
+  const myMessage = (message: IMessagesArr) => {
+    dispatch({ type: ACTIONS.SET_MESSAGES, payload: message });
   };
 
   const enterRoom = async (loginData: ISocketData) => {
@@ -36,6 +36,7 @@ function App() {
 
   useEffect(() => {
     socket.on("connected", setUsers);
+    socket.on("message", myMessage);
     socket.on("disconnected", setUsers);
   }, []);
 
@@ -44,7 +45,7 @@ function App() {
       {!state.isLogin ? (
         <Login enterRoom={enterRoom} />
       ) : (
-        <Chat users={state.users} />
+        <Chat state={state} myMessage={myMessage} />
       )}
     </div>
   );

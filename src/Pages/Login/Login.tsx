@@ -1,20 +1,18 @@
-import React, { useState, useReducer, useEffect } from "react";
-import "./login.scss";
+import React, { useState } from "react";
 import axios from "axios";
-import reducer, { ACTIONS } from "../../components/reducer";
+import "./login.scss";
+import { IEnterRoom } from "../../utils/types";
+// import useLocalStorage from "../../components/useLocalStorage";
 
-function Login({ enterRoom }: any) {
+function Login({ enterRoom }: IEnterRoom) {
   const [login, setlogin] = useState("");
   const [room, setRoom] = useState("");
   const [loading, isLoading] = useState(false);
   const [isValid, setValid] = useState({
     checkValidLogin: true,
     checkValidRoom: true,
+    loginVerified: login,
   });
-
-  // const initialState = { isLoginValid: false, isRoomValid: false };
-
-  // const [state, dispatch] = useReducer(reducer, initialState);
 
   const handleChangeLogin = (e: React.ChangeEvent<HTMLInputElement>) => {
     setlogin(e.target.value);
@@ -24,12 +22,12 @@ function Login({ enterRoom }: any) {
     setRoom(e.target.value);
   };
 
-  // useEffect(() => {
-  //   dispatch({ type: ACTIONS.ISLOGINVALID, payload: { login } });
-  //   dispatch({ type: ACTIONS.ISROOMVALID, payload: { room } });
-  // }, [login, room]);
+  // const [storedValue, setStoredValue] = useLocalStorage(isValid.loginVerified, "false");
 
-  const handleClick = async () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // setStoredValue("true");
+
     const obj = {
       login,
       room,
@@ -38,6 +36,7 @@ function Login({ enterRoom }: any) {
     setValid({
       checkValidLogin: Boolean(login.match(/^\S*$/) && login.trim()),
       checkValidRoom: Boolean(room.match(/^\d+$/)),
+      loginVerified: login,
     });
 
     if (
@@ -56,7 +55,7 @@ function Login({ enterRoom }: any) {
   return (
     <div className="page_login">
       <section>
-        <form className="needs-validation">
+        <form className="needs-validation" onSubmit={handleSubmit}>
           <div className="auth_block login">Логин</div>
 
           <div
@@ -108,9 +107,8 @@ function Login({ enterRoom }: any) {
           <div className="auth_block">
             <button
               disabled={loading}
-              type="button"
+              type="submit"
               className="btn btn-primary"
-              onClick={handleClick}
             >
               Авторизоваться
             </button>

@@ -25,7 +25,7 @@ app.get("/rooms/:room", (req, res) => {
   const { room } = req.params;
 
   const data = rooms.has(room)
-  ? { 
+    ? {
         users: [...rooms.get(room).get("users").values()],
         messages: [...rooms.get(room).get("messages").values()],
       }
@@ -69,6 +69,14 @@ io.on("connection", (socket) => {
         socket.to(key).emit("disconnected", inRoomUsers);
       }
     });
+  });
+
+  socket.on("message", (data) => {
+    const { room, login, messages } = data;
+
+    rooms.get(room).get("messages").push(data);
+
+    socket.to(room).emit("message", data);
   });
 });
 
