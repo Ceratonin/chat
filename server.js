@@ -71,12 +71,11 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("message", (data) => {
-    const { room, login, messages } = data;
+  socket.on("message", (messageData) => {
+    const { room, login, inputMessage } = messageData;
 
-    rooms.get(room).get("messages").push(data);
-
-    socket.to(room).emit("message", data);
+    rooms.get(room).get("messages").push(messageData);
+    socket.to(room).emit("message", messageData);
   });
 });
 

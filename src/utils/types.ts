@@ -1,6 +1,7 @@
 export interface IMessagesArr {
   inputMessage: string;
   login: string;
+  time:string
 }
 
 interface IState {

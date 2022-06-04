@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import moment from "moment";
 import socket from "../../utils/socket";
 import { IChat } from "../../utils/types";
 import "./chat.scss";
@@ -16,8 +17,13 @@ function Chat({ state, myMessage }: IChat) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (inputMessage !== "") {
-      socket.emit("message", { login, room, inputMessage });
-      myMessage({ login, inputMessage });
+      socket.emit("message", {
+        login,
+        room,
+        inputMessage,
+        time: moment().format("HH:m"),
+      });
+      myMessage({ login, inputMessage, time: moment().format("HH:m") });
     }
     setInputMessage("");
   };
@@ -55,14 +61,20 @@ function Chat({ state, myMessage }: IChat) {
                 {message.login === login ? (
                   <div className="my_message">
                     <span className="chat_message">{message.inputMessage}</span>
-                    <span className="chat_message_userName">Вы</span>
+                    <div className="chat_message_info">
+                      <span >Вы</span>
+                      <span >{message.time}</span>
+                    </div>
                   </div>
                 ) : (
                   <div>
                     <span className="chat_message">{message.inputMessage}</span>
-                    <span className="chat_message_userName">
-                      {message.login}
-                    </span>
+                    <div className="chat_message_info">
+                      <span >
+                        {message.login}
+                      </span>
+                      <span >{message.time}</span>
+                    </div>
                   </div>
                 )}
               </div>
