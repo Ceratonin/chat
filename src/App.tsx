@@ -15,6 +15,10 @@ function App() {
     messages: [],
   });
 
+  const setIsLogin = (isLogin: boolean) => {
+    dispatch({type: ACTIONS.LOGIN, payload: isLogin})
+  }
+
   const setUsers = (data: string[]) => {
     dispatch({ type: ACTIONS.SET_USERS, payload: data });
   };
@@ -39,6 +43,7 @@ function App() {
 
   useEffect(() => {
     socket.on("connected", setUsers);
+    socket.on("serviceMessage", myMessage);
     socket.on("message", myMessage);
     socket.on("disconnected", setUsers);
   }, []);

@@ -53,20 +53,38 @@ io.on("connection", (socket) => {
   socket.on("connected", (data) => {
     const { room, login } = data;
 
+    const serviceMessage = {
+      login: "service",
+      room,
+      inputMessage: `${login} подключился`,
+      time: "",
+    };
+
     socket.join(room);
     rooms.get(room).get("users").set(socket.id, login);
 
     const inRoomUsers = [...rooms.get(room).get("users").values()];
     socket.to(room).emit("connected", inRoomUsers);
+
+    rooms.get(room).get("messages").push(serviceMessage);
+    socket.to(room).emit("serviceMessage", serviceMessage);
   });
 
-  socket.on("disconnect", (data) => {
-    const { room, login } = data;
+  socket.on("disconnect", () => {
+    rooms.forEach((data, room) => {
+      const serviceMessage = {
+        login: "service",
+        room,
+        inputMessage: `${data.get("users").get(socket.id)} отключился`,
+        time: "",
+      };
 
-    rooms.forEach((value, key) => {
-      if (value.get("users").delete(socket.id)) {
-        const inRoomUsers = [...value.get("users").values()];
-        socket.to(key).emit("disconnected", inRoomUsers);
+      if (data.get("users").delete(socket.id)) {
+        const inRoomUsers = [...data.get("users").values()];
+        socket.to(room).emit("disconnected", inRoomUsers);
+        
+        rooms.get(room).get("messages").push(serviceMessage);
+        socket.to(room).emit("serviceMessage", serviceMessage);
       }
     });
   });

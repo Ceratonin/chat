@@ -10,6 +10,10 @@ function Chat({ state, myMessage }: IChat) {
 
   const scrollToMessage = useRef<HTMLDivElement | null>(null);
 
+  const handleExit = () => {
+    window.location.reload()
+  }
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputMessage(e.target.value);
   };
@@ -21,9 +25,9 @@ function Chat({ state, myMessage }: IChat) {
         login,
         room,
         inputMessage,
-        time: moment().format("HH:m"),
+        time: moment().format("HH:mm"),
       });
-      myMessage({ login, inputMessage, time: moment().format("HH:m") });
+      myMessage({ login, inputMessage, time: moment().format("HH:mm") });
     }
     setInputMessage("");
   };
@@ -52,6 +56,9 @@ function Chat({ state, myMessage }: IChat) {
               </li>
             ))}
           </ul>
+          <button className="btn exit_btn" type="button" onClick={handleExit}>
+            Выйти
+          </button>
         </div>
 
         <div className="chat_block">
@@ -62,18 +69,20 @@ function Chat({ state, myMessage }: IChat) {
                   <div className="my_message">
                     <span className="chat_message">{message.inputMessage}</span>
                     <div className="chat_message_info">
-                      <span >Вы</span>
-                      <span >{message.time}</span>
+                      <span>Вы</span>
+                      <span>{message.time}</span>
                     </div>
+                  </div>
+                ) : message.login === "service" ? (
+                  <div className="service_message">
+                    <span className="chat_message">{message.inputMessage}</span>
                   </div>
                 ) : (
                   <div>
                     <span className="chat_message">{message.inputMessage}</span>
                     <div className="chat_message_info">
-                      <span >
-                        {message.login}
-                      </span>
-                      <span >{message.time}</span>
+                      <span>{message.login}</span>
+                      <span>{message.time}</span>
                     </div>
                   </div>
                 )}

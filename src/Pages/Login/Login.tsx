@@ -11,7 +11,6 @@ function Login({ enterRoom }: IEnterRoom) {
   const [isValid, setValid] = useState({
     checkValidLogin: true,
     checkValidRoom: true,
-    loginVerified: login,
   });
 
   const handleChangeLogin = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,8 +23,7 @@ function Login({ enterRoom }: IEnterRoom) {
 
   // const [storedValue, setStoredValue] = useLocalStorage(isValid.loginVerified, "false");
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleClick = async () => {
     // setStoredValue("true");
 
     const obj = {
@@ -34,18 +32,21 @@ function Login({ enterRoom }: IEnterRoom) {
     };
 
     setValid({
-      checkValidLogin: Boolean(login.match(/^\S*$/) && login.trim()),
+      checkValidLogin: Boolean(
+        login.match(/^\S*$/) && login.trim() && login !== "service"
+      ),
       checkValidRoom: Boolean(room.match(/^\d+$/)),
-      loginVerified: login,
     });
 
     if (
       login === "" ||
       !login.match(/^\S*$/) ||
+      login === "service" ||
       room === "" ||
       !room.match(/^\d+$/)
-    )
+    ) {
       return;
+    }
 
     isLoading((val) => !val);
 
@@ -55,7 +56,7 @@ function Login({ enterRoom }: IEnterRoom) {
   return (
     <div className="page_login">
       <section>
-        <form className="needs-validation" onSubmit={handleSubmit}>
+        <form className="needs-validation">
           <div className="auth_block login">Логин</div>
 
           <div
@@ -107,8 +108,9 @@ function Login({ enterRoom }: IEnterRoom) {
           <div className="auth_block">
             <button
               disabled={loading}
-              type="submit"
+              type="button"
               className="btn btn-primary"
+              onClick={handleClick}
             >
               Авторизоваться
             </button>

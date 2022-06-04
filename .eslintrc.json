@@ -44,6 +44,7 @@
     "consistent-return": "off",
     "import/prefer-default-export": 0,
     "eqeqeq": 1,
-    "react/no-array-index-key": "warn"
+    "react/no-array-index-key": "warn",
+    "no-nested-ternary": 0
   }
 }
