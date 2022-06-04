@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./login.scss";
 import { IEnterRoom } from "../../utils/types";
-// import useLocalStorage from "../../components/useLocalStorage";
 
 function Login({ enterRoom }: IEnterRoom) {
   const [login, setlogin] = useState("");
@@ -21,11 +20,7 @@ function Login({ enterRoom }: IEnterRoom) {
     setRoom(e.target.value);
   };
 
-  // const [storedValue, setStoredValue] = useLocalStorage(isValid.loginVerified, "false");
-
   const handleClick = async () => {
-    // setStoredValue("true");
-
     const obj = {
       login,
       room,

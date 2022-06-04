@@ -1,0 +1,48 @@
+.users_block {
+  display: flex;
+  flex-direction: column;
+  box-shadow: -5px 5px 5px rgb(29, 29, 29);
+  margin-right: 1rem;
+  border-radius: 0.5rem;
+  width: 25%;
+  background: linear-gradient(225deg, #444446 30%, #333336 90%);
+  border-radius: 0.5rem;
+  height: 100%;
+
+  .users_header {
+    padding: 0.5rem 1rem;
+    font-size: calc(1.5vw);
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .users_line {
+    margin: 0 1rem;
+    color: black;
+  }
+
+  .exit_btn {
+    margin-top: auto;
+    background-color: lightgray;
+    width: 100%;
+  }
+
+  .users_list {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1rem;
+    color: white;
+
+    .users_user {
+      border: 0.1rem solid rgba(27, 27, 27, 0.1);
+      border-radius: 0.5rem;
+      padding: 0.4rem;
+      margin: 0.4rem 0;
+      box-shadow: -0.1rem 0.1rem 0.1rem black;
+      font-family: sans-serif;
+      list-style-type: none;
+    }
+  }
+}

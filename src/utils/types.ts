@@ -4,7 +4,7 @@ export interface IMessagesArr {
   time:string
 }
 
-interface IState {
+export interface IState {
   isLogin: boolean;
   login: string;
   room: string;
@@ -14,7 +14,7 @@ interface IState {
 
 export interface IChat {
   state: IState;
-  myMessage: (message: IMessagesArr) => void;
+  setMessage: (message: IMessagesArr) => void;
 }
 
 export interface ISocketData {

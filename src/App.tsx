@@ -15,15 +15,11 @@ function App() {
     messages: [],
   });
 
-  const setIsLogin = (isLogin: boolean) => {
-    dispatch({type: ACTIONS.LOGIN, payload: isLogin})
-  }
-
   const setUsers = (data: string[]) => {
     dispatch({ type: ACTIONS.SET_USERS, payload: data });
   };
 
-  const myMessage = (message: IMessagesArr) => {
+  const setMessage = (message: IMessagesArr) => {
     dispatch({ type: ACTIONS.SET_MESSAGES, payload: message });
   };
 
@@ -43,8 +39,8 @@ function App() {
 
   useEffect(() => {
     socket.on("connected", setUsers);
-    socket.on("serviceMessage", myMessage);
-    socket.on("message", myMessage);
+    socket.on("serviceMessage", setMessage);
+    socket.on("message", setMessage);
     socket.on("disconnected", setUsers);
   }, []);
 
@@ -53,7 +49,7 @@ function App() {
       {!state.isLogin ? (
         <Login enterRoom={enterRoom} />
       ) : (
-        <Chat state={state} myMessage={myMessage} />
+        <Chat state={state} setMessage={setMessage} />
       )}
     </div>
   );
