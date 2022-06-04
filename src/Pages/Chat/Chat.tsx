@@ -15,16 +15,17 @@ function Chat({ state, myMessage }: IChat) {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    socket.emit("message", { login, room, inputMessage });
-    myMessage({ login, inputMessage });
+    if (inputMessage !== "") {
+      socket.emit("message", { login, room, inputMessage });
+      myMessage({ login, inputMessage });
+    }
     setInputMessage("");
   };
 
   useEffect(() => {
     if (scrollToMessage !== null && scrollToMessage.current !== null) {
       scrollToMessage.current.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
+        block: "end",
       });
     }
   }, [messages]);

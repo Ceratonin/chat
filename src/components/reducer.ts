@@ -2,6 +2,7 @@ export const ACTIONS = {
   LOGIN: "login",
   SET_USERS: "setUsers",
   SET_MESSAGES: "setMessages",
+  GET_DATA: "getData",
 };
 
 const reducer = (state: any, action: any) => {
@@ -24,6 +25,13 @@ const reducer = (state: any, action: any) => {
       return {
         ...state,
         messages: [...state.messages, action.payload],
+      };
+
+    case ACTIONS.GET_DATA:
+      return {
+        ...state,
+        users: action.payload.users,
+        messages: action.payload.messages,
       };
 
     default:

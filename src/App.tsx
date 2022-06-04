@@ -31,7 +31,10 @@ function App() {
 
     socket.emit("connected", loginData);
     const { data }: any = await axios.get(`/rooms/${loginData.room}`);
-    setUsers(data.users);
+    dispatch({
+      type: ACTIONS.GET_DATA,
+      payload: data,
+    });
   };
 
   useEffect(() => {
