@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import socket from "../../utils/socket";
 import { IChat } from "../../utils/types";
 import "./chat.scss";
@@ -6,6 +6,8 @@ import "./chat.scss";
 function Chat({ state, myMessage }: IChat) {
   const { login, room, users, messages } = state;
   const [inputMessage, setInputMessage] = useState("");
+
+  const scrollToMessage = useRef<HTMLDivElement | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputMessage(e.target.value);
@@ -17,6 +19,15 @@ function Chat({ state, myMessage }: IChat) {
     myMessage({ login, inputMessage });
     setInputMessage("");
   };
+
+  useEffect(() => {
+    if (scrollToMessage !== null && scrollToMessage.current !== null) {
+      scrollToMessage.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [messages]);
 
   return (
     <div className="page_chat">
@@ -38,19 +49,23 @@ function Chat({ state, myMessage }: IChat) {
 
         <div className="chat_block">
           <div className="chat_messages_list" id="scroll">
-            {messages.map((message, key) =>
-              message.login === login ? (
-                <div key={key} className="chat_message_obj">
-                  <span className="my chat_message">{message.inputMessage}</span>
-                  <span className="my chat_message_userName">{message.login}</span>
-                </div>
-              ) : (
-                <div key={key} className="chat_message_obj">
-                  <span className="chat_message">{message.inputMessage}</span>
-                  <span className="chat_message_userName">{message.login}</span>
-                </div>
-              )
-            )}
+            {messages.map((message, key) => (
+              <div ref={scrollToMessage} key={key} className="chat_message_obj">
+                {message.login === login ? (
+                  <div className="my_message">
+                    <span className="chat_message">{message.inputMessage}</span>
+                    <span className="chat_message_userName">Вы</span>
+                  </div>
+                ) : (
+                  <div>
+                    <span className="chat_message">{message.inputMessage}</span>
+                    <span className="chat_message_userName">
+                      {message.login}
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
 
           <div className="message_send_block">
